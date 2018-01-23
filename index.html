@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script async defer
+        src=
+        "https://maps.googleapis.com/maps/api/js?libraries=geometry,drawing&key=AIzaSyA3kcc5mTYacreo-kLUOM2ZF9N7u_hGQoQ&v=3&callback=initMap">
+    </script>
+    <link rel="stylesheet" href="css/main.css">
+    <script async type="text/javascript" src="js/index.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="options-box">
+        <h1>Find Your Favorite place</h1>
+        <div>
+          <input id="show-listings" type="button" value="Show Listings">
+          <input id="hide-listings" type="button" value="Hide Listings">
+        </div>
+        <hr>
+        <div>
+          <input id="zoom-to-area-text" type="text" placeholder="Enter your favorite area!">
+          <input id="zoom-to-area" type="button" value="Zoom">
+        </div>
+      </div>
+      <div id="map"></div>
+    </div>
+  </body>
+</html>
