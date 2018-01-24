@@ -3,6 +3,21 @@ var map;
 // Create a new blank array for all the listing markers.
 var markers = [];
 
+// These are the real estate listings that will be shown to the user.
+// Normally we'd have these in a database instead.
+var locations = [
+  { title: 'Amazon theater', location: {lat: -3.1302807, lng: -60.0233297} },
+  { title: 'Museum amazon', location: {lat: -3.1283007, lng: -60.0223403} },
+  { title: 'Culture House', location: {lat: -3.1342713, lng: -60.0262395} },
+  { title: 'Amazon Shopping', location: {lat: -3.093700, lng:  -60.022791} },
+  { title: 'Internation Airport', location: {lat: -3.031175, lng: -60.046066} },
+  { title: 'Amazon University', location: {lat: -3.099357, lng: -59.977755} },
+  { title: 'Pet House & Cia', location: {lat: -3.126587, lng:  -60.007630 } }
+];
+
+// Sample foursquare request
+// https://api.foursquare.com/v2/venues/4bb7be58314e95211ca2479d?oauth_token=OGKSBDEME0VT1YZU5RZZFBHKKSNVGFQCWRHLDQFCY4NQBGD4&v=20180124
+
 function initMap() {
   // Create a styles array to use with the map.
   var styles = [
@@ -71,6 +86,8 @@ function initMap() {
       ]
     }
   ];
+  
+  ko.applyBindings(new viewModel());
 
   // Constructor creates a new map - only center and zoom are required.
   map = new google.maps.Map(document.getElementById('map'), {
@@ -79,18 +96,6 @@ function initMap() {
     styles: styles,
     mapTypeControl: false
   });
-
-  // These are the real estate listings that will be shown to the user.
-  // Normally we'd have these in a database instead.
-  var locations = [
-    { title: 'Amazon theater', location: {lat: -3.1302807, lng: -60.0233297} },
-    { title: 'Museum amazon', location: {lat: -3.1283007, lng: -60.0223403} },
-    { title: 'Culture House', location: {lat: -3.1342713, lng: -60.0262395} },
-    { title: 'Amazon Shopping', location: {lat: -3.093700, lng:  -60.022791} },
-    { title: 'Internation Airport', location: {lat: -3.031175, lng: -60.046066} },
-    { title: 'Amazon University', location: {lat: -3.099357, lng: -59.977755} },
-    { title: 'Pet House & Cia', location: {lat: -3.126587, lng:  -60.007630 } }
-  ];
 
   var largeInfowindow = new google.maps.InfoWindow();
 
@@ -129,8 +134,11 @@ function initMap() {
       this.setIcon(defaultIcon);
     });
   }
+  
+  // Initialize pins
+  showListings();
 
-  document.getElementById('show-listings').addEventListener('click', showListings);
+  //document.getElementById('show-listings').addEventListener('click', showListings);
   document.getElementById('hide-listings').addEventListener('click', hideListings);
 
   document.getElementById('zoom-to-area').addEventListener('click', function() {
@@ -244,4 +252,29 @@ function zoomToArea() {
         }
       });
   }
+}
+
+// single place object
+var Place = function (data) {
+    "use strict";
+    this.name = ko.observable(data.name);
+    this.lat = ko.observable(data.lat);
+    this.lng = ko.observable(data.lng);
+    this.id = ko.observable(data.id);
+    this.marker = ko.observable();
+    this.description = ko.observable('');
+    this.address = ko.observable('');
+    this.rating = ko.observable('');
+    this.photo = ko.observable('');
+};
+
+// Handle all interactions such as, filter, search and click
+function viewModel() {
+  var self = this;
+  
+  this.places = ko.observableArray([]);
+  
+  locations.forEach(function (places) {
+    self.places.push(new Place(places));
+  });
 }
