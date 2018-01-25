@@ -7,16 +7,16 @@ var markers = [];
 // These are the real estate listings that will be shown to the user.
 // Normally we'd have these in a database instead.
 var locations = [
-  { title: 'Teatro Amazonas', location: {lat: -3.13026400328893, lng: -60.02314908159843} },
-  { title: 'Jardim Botânico Adolpho Ducke', location: {lat: -3.0073486139980687, lng: -59.93967762220971} },
-  { title: 'Ponta Negra (Manaus)', location: {lat: -3.066115012379097, lng: -60.09809999253315} },
-  { title: 'Ponte Jornalista Phelippe Daou', location: {lat: -3.1203117128546087, lng:  -60.079582929611206} },
-  { title: 'Aeroporto Internacional de Manaus', location: {lat: -3.0319609869385165, lng: -60.04603885297747} },
-  { title: 'Universidade Federal do Amazonas', location: {lat: -3.0998323793813674, lng: -59.974869624148745} },
-  { title: 'Avenida das Torres', location: {lat: -3.0934318769375415, lng:  -59.98937479695357 } },
-  { title: 'Universidade do Estado do Amazonas', location: {lat: -3.0917768221643263, lng:  -60.01810188018957 } },
-  { title: 'Arena da Amazônia', location: {lat: -3.0832657510562296, lng:  -60.02815961837768 } }
-  ];
+  { id: 0, title: 'Teatro Amazonas', location: {lat: -3.13026400328893, lng: -60.02314908159843} },
+  { id: 1, title: 'Jardim Botânico Adolpho Ducke', location: {lat: -3.0073486139980687, lng: -59.93967762220971} },
+  { id: 2, title: 'Ponta Negra (Manaus)', location: {lat: -3.066115012379097, lng: -60.09809999253315} },
+  { id: 3, title: 'Ponte Jornalista Phelippe Daou', location: {lat: -3.1203117128546087, lng:  -60.079582929611206} },
+  { id: 4, title: 'Aeroporto Internacional de Manaus', location: {lat: -3.0319609869385165, lng: -60.04603885297747} },
+  { id: 5, title: 'Universidade Federal do Amazonas', location: {lat: -3.0998323793813674, lng: -59.974869624148745} },
+  { id: 6, title: 'Avenida das Torres', location: {lat: -3.0934318769375415, lng:  -59.98937479695357 } },
+  { id: 7, title: 'Universidade do Estado do Amazonas', location: {lat: -3.0917768221643263, lng:  -60.01810188018957 } },
+  { id: 8, title: 'Arena da Amazônia', location: {lat: -3.0832657510562296, lng:  -60.02815961837768 } }
+];
 
 // Sample foursquare request
 // https://api.foursquare.com/v2/venues/4bb7be58314e95211ca2479d?oauth_token=OGKSBDEME0VT1YZU5RZZFBHKKSNVGFQCWRHLDQFCY4NQBGD4&v=20180124
@@ -168,10 +168,6 @@ function populateInfoWindow(marker, infowindow) {
       infowindow.marker = null;
     });
     
-    console.log("Longitute.: ", marker.title);
-    console.log("Latitude..: ", marker.getPosition().lat());
-    console.log("Longitute.: ", marker.getPosition().lng());
-    
     // Wikipedia request
     var wikiRequestTimeout = setTimeout(function() {
       infowindow.setContent("<p>Failed to get wikipedia resources</p>");
@@ -197,6 +193,7 @@ function populateInfoWindow(marker, infowindow) {
     
     infowindow.open(map, marker);
   }
+  map.setZoom(12);
 }
 
 // Get description from wikipedia API
@@ -292,7 +289,8 @@ function zoomToArea() {
 }
 
 // single place object
-var singlePlace = function (data) {
+var singlePlace = function(data) {
+  this.id = ko.observable(data.id);
   this.name = ko.observable(data.title);
   this.lat = ko.observable(data.location.lat);
   this.lng = ko.observable(data.location.lng);
@@ -309,4 +307,7 @@ var viewModel = function() {
     self.places.push(new singlePlace(place));
   });
   
+  self.getMoreInfo = function(place) {
+    google.maps.event.trigger(markers[place.id()], 'click');
+  }
 }
