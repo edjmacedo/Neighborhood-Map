@@ -3,17 +3,20 @@ var map;
 // Create a new blank array for all the listing markers.
 var markers = [];
 
+
 // These are the real estate listings that will be shown to the user.
 // Normally we'd have these in a database instead.
 var locations = [
-  { title: 'Amazon theater', location: {lat: -3.1302807, lng: -60.0233297} },
-  { title: 'Museum amazon', location: {lat: -3.1283007, lng: -60.0223403} },
-  { title: 'Culture House', location: {lat: -3.1342713, lng: -60.0262395} },
-  { title: 'Amazon Shopping', location: {lat: -3.093700, lng:  -60.022791} },
-  { title: 'Internation Airport', location: {lat: -3.031175, lng: -60.046066} },
-  { title: 'Amazon University', location: {lat: -3.099357, lng: -59.977755} },
-  { title: 'Pet House & Cia', location: {lat: -3.126587, lng:  -60.007630 } }
-];
+  { title: 'Amazon theater', location: {lat: -3.13026400328893, lng: -60.02314908159843} },
+  { title: 'Museum amazon', location: {lat: -3.0073486139980687, lng: -59.93967762220971} },
+  { title: 'Culture House', location: {lat: -3.12206653909167, lng: -60.01876240930978} },
+  { title: 'Amazon Shopping', location: {lat: -3.094204920103771, lng:  -60.02268613137966} },
+  { title: 'Internation Airport', location: {lat: -3.0319609869385165, lng: -60.04603885297747} },
+  { title: 'Amazon University', location: {lat: -3.0998323793813674, lng: -59.974869624148745} },
+  { title: 'Pet House & Cia', location: {lat: -3.126136999215603, lng:  -60.012388719621725 } },
+  { title: 'Manauara Shopping', location: {lat: -3.104079342526906, lng:  -60.01179031947699 } },
+  { title: 'Arena da Amazonia', location: {lat: -3.0832657510562296, lng:  -60.02815961837768 } }
+  ];
 
 // Sample foursquare request
 // https://api.foursquare.com/v2/venues/4bb7be58314e95211ca2479d?oauth_token=OGKSBDEME0VT1YZU5RZZFBHKKSNVGFQCWRHLDQFCY4NQBGD4&v=20180124
@@ -255,26 +258,21 @@ function zoomToArea() {
 }
 
 // single place object
-var Place = function (data) {
-    "use strict";
-    this.name = ko.observable(data.name);
-    this.lat = ko.observable(data.lat);
-    this.lng = ko.observable(data.lng);
-    this.id = ko.observable(data.id);
-    this.marker = ko.observable();
-    this.description = ko.observable('');
-    this.address = ko.observable('');
-    this.rating = ko.observable('');
-    this.photo = ko.observable('');
+var singlePlace = function (data) {
+  this.name = ko.observable(data.title);
+  this.lat = ko.observable(data.location.lat);
+  this.lng = ko.observable(data.location.lng);
 };
 
 // Handle all interactions such as, filter, search and click
-function viewModel() {
+var viewModel = function() {
   var self = this;
   
   this.places = ko.observableArray([]);
   
-  locations.forEach(function (places) {
-    self.places.push(new Place(places));
+  // Iterate each location to construct array of places
+  locations.forEach(function(place) {
+    self.places.push(new singlePlace(place));
   });
+  
 }

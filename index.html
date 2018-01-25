@@ -22,6 +22,11 @@
           <input id="zoom-to-area-text" type="text" placeholder="Enter your favorite area!">
           <input id="zoom-to-area" type="button" value="Zoom">
         </div>
+        <div id="place-list">
+          <ul id="place-view" data-bind="foreach: places">
+		    <li id="place-name" data-bind="text: name, click: $parent.getMoreInfo"></li>
+		  </ul>
+        </div>
       </div>
       <div id="map"></div>
     </div>
