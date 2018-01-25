@@ -7,15 +7,15 @@ var markers = [];
 // These are the real estate listings that will be shown to the user.
 // Normally we'd have these in a database instead.
 var locations = [
-  { title: 'Amazon theater', location: {lat: -3.13026400328893, lng: -60.02314908159843} },
-  { title: 'Museum amazon', location: {lat: -3.0073486139980687, lng: -59.93967762220971} },
-  { title: 'Culture House', location: {lat: -3.12206653909167, lng: -60.01876240930978} },
-  { title: 'Amazon Shopping', location: {lat: -3.094204920103771, lng:  -60.02268613137966} },
-  { title: 'Internation Airport', location: {lat: -3.0319609869385165, lng: -60.04603885297747} },
-  { title: 'Amazon University', location: {lat: -3.0998323793813674, lng: -59.974869624148745} },
-  { title: 'Pet House & Cia', location: {lat: -3.126136999215603, lng:  -60.012388719621725 } },
-  { title: 'Manauara Shopping', location: {lat: -3.104079342526906, lng:  -60.01179031947699 } },
-  { title: 'Arena da Amazonia', location: {lat: -3.0832657510562296, lng:  -60.02815961837768 } }
+  { title: 'Teatro Amazonas', location: {lat: -3.13026400328893, lng: -60.02314908159843} },
+  { title: 'Jardim Botânico Adolpho Ducke', location: {lat: -3.0073486139980687, lng: -59.93967762220971} },
+  { title: 'Ponta Negra (Manaus)', location: {lat: -3.066115012379097, lng: -60.09809999253315} },
+  { title: 'Ponte Jornalista Phelippe Daou', location: {lat: -3.1203117128546087, lng:  -60.079582929611206} },
+  { title: 'Aeroporto Internacional de Manaus', location: {lat: -3.0319609869385165, lng: -60.04603885297747} },
+  { title: 'Universidade Federal do Amazonas', location: {lat: -3.0998323793813674, lng: -59.974869624148745} },
+  { title: 'Avenida das Torres', location: {lat: -3.0934318769375415, lng:  -59.98937479695357 } },
+  { title: 'Universidade do Estado do Amazonas', location: {lat: -3.0917768221643263, lng:  -60.01810188018957 } },
+  { title: 'Arena da Amazônia', location: {lat: -3.0832657510562296, lng:  -60.02815961837768 } }
   ];
 
 // Sample foursquare request
@@ -95,7 +95,7 @@ function initMap() {
   // Constructor creates a new map - only center and zoom are required.
   map = new google.maps.Map(document.getElementById('map'), {
     center: {lat: -3.0894883, lng: -59.9963515},
-    zoom: 13,
+    zoom: 12,
     styles: styles,
     mapTypeControl: false
   });
@@ -153,6 +153,11 @@ function initMap() {
 // one infowindow which will open at the marker that is clicked, and populate based
 // on that markers position.
 function populateInfoWindow(marker, infowindow) {
+  var lat = marker.getPosition().lat();
+  var lng = marker.getPosition().lng();
+  var wikiURL = 'http://pt.wikipedia.org/w/api.php?action=query&'+
+      'format=json&prop=pageimages%7Cpageterms&list=&titles=' + marker.title +
+      '&redirects=1&formatversion=2&piprop=thumbnail&pilimit=1&wbptterms=description';
   // Check to make sure the infowindow is not already opened on this marker.
   if (infowindow.marker != marker) {
     // Clear the infowindow content to give the streetview time to load.
@@ -162,39 +167,68 @@ function populateInfoWindow(marker, infowindow) {
     infowindow.addListener('closeclick', function() {
       infowindow.marker = null;
     });
-    var streetViewService = new google.maps.StreetViewService();
-    var radius = 50;
-    // In case the status is OK, which means the pano was found, compute the
-    // position of the streetview image, then calculate the heading, then get a
-    // panorama from that and set the options
-    function getStreetView(data, status) {
-      if (status == google.maps.StreetViewStatus.OK) {
-        var nearStreetViewLocation = data.location.latLng;
-        var heading = google.maps.geometry.spherical.computeHeading(
-          nearStreetViewLocation, marker.position);
-          infowindow.setContent('<div>' + marker.title + '</div><div id="pano"></div>');
-          var panoramaOptions = {
-            position: nearStreetViewLocation,
-            pov: {
-              heading: heading,
-              pitch: 30
-            }
-          };
-        var panorama = new google.maps.StreetViewPanorama(
-          document.getElementById('pano'), panoramaOptions
-        );
-      } else {
-        infowindow.setContent('<div>' + marker.title + '</div>' +
-        '<div>No Street View Found</div>');
+    
+    console.log("Longitute.: ", marker.title);
+    console.log("Latitude..: ", marker.getPosition().lat());
+    console.log("Longitute.: ", marker.getPosition().lng());
+    
+    // Wikipedia request
+    var wikiRequestTimeout = setTimeout(function() {
+      infowindow.setContent("<p>Failed to get wikipedia resources</p>");
+    }, 8000);
+    
+    $.ajax({
+      url: wikiURL,
+      dataType: "jsonp",
+      success: function(response) {
+        console.log(response);
+        Object.keys(response).map(function(key, index) {
+          var res = response[key];
+          Object.keys(res).map(function(key, index) {
+            infowindow.setContent('<p>' + res[key][0].title + '</p>'+
+                                 '<img src=' + getThumbnail(res[key][0]) + '>' +
+                                 '<p>' + getDescription(res[key][0]) + '</p>' +
+                                 '<p>' + lat + ',' + lng + '</p>');
+          });
+        });
+        clearTimeout(wikiRequestTimeout);
       }
-    }
-    // Use streetview service to get the closest streetview image within
-    // 50 meters of the markers position
-    streetViewService.getPanoramaByLocation(marker.position, radius, getStreetView);
-    // Open the infowindow on the correct marker.
+    });
+    
     infowindow.open(map, marker);
   }
 }
+
+// Get description from wikipedia API
+function getDescription(descriptObj) {
+  var description = '';
+  Object.keys(descriptObj).map(function(key, index) {
+    if (key == "terms") {
+      description = descriptObj[key]
+      Object.keys(description).map(function(key, index) {
+        description = description[key][0];
+      });
+    }
+  });
+  
+  return description;
+}
+
+// Get thumbnail from wikipedia API
+function getThumbnail(thumbObj) {
+  var thumb = ''
+  Object.keys(thumbObj).map(function(key, index) {
+    if ( key == "thumbnail") {
+      thumb = thumbObj[key];
+      Object.keys(thumb).map(function(key, index) {
+        if (key == "source") {
+          thumb = thumb[key];
+        }
+      });
+    }
+  });
+  return thumb;
+} 
 
 // This function will loop through the markers array and display them all.
 function showListings() {
