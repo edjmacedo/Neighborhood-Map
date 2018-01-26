@@ -97,8 +97,9 @@ function initMap() {
     mapTypeControl: false
   });
 
+  // Google maps infowindow
   var largeInfowindow = new google.maps.InfoWindow();
-
+  
   // Style the markers a bit. This will be our listing marker icon.
   var defaultIcon = makeMarkerIcon('0091ff');
 
@@ -145,6 +146,7 @@ function initMap() {
 function populateInfoWindow(marker, infowindow) {
   var lat = marker.getPosition().lat();
   var lng = marker.getPosition().lng();
+  var center = new google.maps.LatLng(lat, lng);
   var wikiURL = 'http://pt.wikipedia.org/w/api.php?action=query&'+
       'format=json&prop=pageimages%7Cpageterms&list=&titles=' + marker.title +
       '&redirects=1&formatversion=2&piprop=thumbnail&pilimit=1&wbptterms=description';
@@ -167,7 +169,6 @@ function populateInfoWindow(marker, infowindow) {
       url: wikiURL,
       dataType: "jsonp",
       success: function(response) {
-        console.log(response);
         Object.keys(response).map(function(key, index) {
           var res = response[key];
           Object.keys(res).map(function(key, index) {
@@ -183,7 +184,8 @@ function populateInfoWindow(marker, infowindow) {
     
     infowindow.open(map, marker);
   }
-  map.setZoom(12);
+  map.setZoom(15);
+  map.panTo(center);
 }
 
 // Get description from wikipedia API
@@ -253,9 +255,11 @@ var singlePlace = function(data) {
 // Handle all interactions such as, filter, search and click
 var viewModel = function() {
   var self = this;
-  self.query = ko.observable('');
+  var drawer = document.querySelector('.options-box');
+  this.query = ko.observable('');
   this.places = ko.observableArray([]);
   this.placeObjectSearch = ko.observableArray([]);
+  this.hasToggleMenu = ko.observable(false);
   
   // Iterate each location to construct array of places
   // and draw list in menu
@@ -264,8 +268,13 @@ var viewModel = function() {
     self.placeObjectSearch.push(new singlePlace(place));
   });
   
+  // Trigger event click in pin
   self.getMoreInfo = function(place) {
     google.maps.event.trigger(markers[place.id()], 'click');
+    if (self.hasToggleMenu()) {
+      self.hasToggleMenu(false);
+      drawer.classList.remove('open');
+    }
   }
   
   // Filter function
@@ -285,4 +294,19 @@ var viewModel = function() {
       markers[place.id()].setVisible(true);
     });
   };
+  
+  // Open menu
+  self.showMenu = function(toggleMenu) {
+    self.hasToggleMenu(true);
+    drawer.classList.toggle('open');
+  }
+  
+  self.resetMapZoom = function() {
+    map.panTo(new google.maps.LatLng(-3.0894883, -59.9963515));
+    map.setZoom(12);
+    if (self.hasToggleMenu()) {
+      self.hasToggleMenu(false);
+      drawer.classList.remove('open');
+    }
+  }
 }

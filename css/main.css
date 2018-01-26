@@ -11,6 +11,10 @@ body {
   position: relative;
 }
 
+.header-menu {
+  display: none;
+}
+
 input {
   font-size: 12px;
 }
@@ -37,6 +41,7 @@ hr {
 #map {
   bottom:0px;
   height: 100%;
+  width: 81%;
   left: 362px;
   position: absolute;
   right: 0px;
@@ -50,6 +55,7 @@ hr {
   line-height: 35px;
   padding: 10px 10px 30px 10px;
   text-align: left;
+  margin-left: 0px;
   width: 340px;
 }
 
@@ -66,10 +72,36 @@ hr {
   font-size: 12px;
 }
 
-#zoom-to-area-text {
-  width: 70%;
-}
-
-#zoom-to-area {
-  width: 24%;
+@media only screen and (max-width: 620px) {
+  .options-box {
+    background: #fff;
+    border: 1px solid #999;
+    border-radius: 3px;
+    height: 100%;
+    line-height: 35px;
+    padding: 10px 10px 30px 10px;
+    text-align: left;
+    margin-left: -361px;
+    width: 340px;
+  }
+  
+  .options-box.open {
+    margin-left: 0px;
+  }
+  
+  #map {
+    position: sticky;
+    left: 75px;
+    width: 100%;
+    z-index: -9;
+  }
+  
+  .header-menu {
+    padding-top: 20px;
+    display: block;
+    z-index: 9;
+    cursor: pointer;
+    width: 60px;
+    height: 60px;
+  }
 }

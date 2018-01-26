@@ -2,6 +2,8 @@
 <html>
   <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <script src="js/knockoutjs.js"></script>
     <script src="js/jquery.min.js"></script>
     <script async defer
@@ -13,11 +15,17 @@
   </head>
   <body>
     <div class="container">
+      <a id="menu" class="header-menu" data-bind="click: showMenu">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path d="M2 6h20v3H2zm0 5h20v3H2zm0 5h20v3H2z"/>
+        </svg>
+      </a>
       <div class="options-box">
         <h1>Find Your Favorite place</h1>
         <hr>
         <div>
           <input class="form-control" placeholder="Search…" type="search" name="filter" data-bind="textInput: query, event: {keyup: filterPins}" autocomplete="on">
+          <input type="button" data-bind="click: resetMapZoom" value="Reset Map">
         </div>
         <div id="place-list">
           <ul id="place-view" data-bind="foreach: places">
