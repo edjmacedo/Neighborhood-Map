@@ -15,14 +15,9 @@
     <div class="container">
       <div class="options-box">
         <h1>Find Your Favorite place</h1>
-        <div>
-          <input id="show-listings" type="button" value="Show Listings">
-          <input id="hide-listings" type="button" value="Hide Listings">
-        </div>
         <hr>
         <div>
-          <input id="zoom-to-area-text" type="text" placeholder="Enter your favorite area!">
-          <input id="zoom-to-area" type="button" value="Zoom">
+          <input class="form-control" placeholder="Search…" type="search" name="filter" data-bind="textInput: query, event: {keyup: filterPins}" autocomplete="on">
         </div>
         <div id="place-list">
           <ul id="place-view" data-bind="foreach: places">

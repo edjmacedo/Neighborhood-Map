@@ -18,9 +18,6 @@ var locations = [
   { id: 8, title: 'Arena da Amazônia', location: {lat: -3.0832657510562296, lng:  -60.02815961837768 } }
 ];
 
-// Sample foursquare request
-// https://api.foursquare.com/v2/venues/4bb7be58314e95211ca2479d?oauth_token=OGKSBDEME0VT1YZU5RZZFBHKKSNVGFQCWRHLDQFCY4NQBGD4&v=20180124
-
 function initMap() {
   // Create a styles array to use with the map.
   var styles = [
@@ -140,13 +137,6 @@ function initMap() {
   
   // Initialize pins
   showListings();
-
-  //document.getElementById('show-listings').addEventListener('click', showListings);
-  document.getElementById('hide-listings').addEventListener('click', hideListings);
-
-  document.getElementById('zoom-to-area').addEventListener('click', function() {
-    zoomToArea();
-  });
 }
 
 // This function populates the infowindow when the marker is clicked. We'll only allow
@@ -238,13 +228,6 @@ function showListings() {
   map.fitBounds(bounds);
 }
 
-// This function will loop through the listings and hide them all.
-function hideListings() {
-  for (var i = 0; i < markers.length; i++) {
-    markers[i].setMap(null);
-  }
-}
-
 // This function takes in a COLOR, and then creates a new marker
 // icon of that color. The icon will be 21 px wide by 34 high, have an origin
 // of 0, 0 and be anchored at 10, 34).
@@ -259,35 +242,6 @@ function makeMarkerIcon(markerColor) {
   return markerImage;
 }
 
-// This function takes the input value in the find nearby area text input
-// locates it, and then zooms into that area. This is so that the user can
-// show all listings, then decide to focus on one area of the map.
-function zoomToArea() {
-  // Initialize the geocoder.
-  var geocoder = new google.maps.Geocoder();
-  // Get the address or place that the user entered.
-  var address = document.getElementById('zoom-to-area-text').value;
-  // Make sure the address isn't blank.
-  if (address == '') {
-    window.alert('You must enter an area, or address.');
-  } else {
-    // Geocode the address/area entered to get the center. Then, center the map
-    // on it and zoom in
-    geocoder.geocode(
-      { address: address,
-        componentRestrictions: {locality: 'New York'}
-      }, function(results, status) {
-        if (status == google.maps.GeocoderStatus.OK) {
-          map.setCenter(results[0].geometry.location);
-          map.setZoom(15);
-        } else {
-          window.alert('We could not find that location - try entering a more' +
-                    ' specific place.');
-        }
-      });
-  }
-}
-
 // single place object
 var singlePlace = function(data) {
   this.id = ko.observable(data.id);
@@ -299,15 +253,36 @@ var singlePlace = function(data) {
 // Handle all interactions such as, filter, search and click
 var viewModel = function() {
   var self = this;
-  
+  self.query = ko.observable('');
   this.places = ko.observableArray([]);
+  this.placeObjectSearch = ko.observableArray([]);
   
   // Iterate each location to construct array of places
+  // and draw list in menu
   locations.forEach(function(place) {
     self.places.push(new singlePlace(place));
+    self.placeObjectSearch.push(new singlePlace(place));
   });
   
   self.getMoreInfo = function(place) {
     google.maps.event.trigger(markers[place.id()], 'click');
   }
+  
+  // Filter function
+  self.filterPins = function () {
+    var search = self.query().toLowerCase();
+    // Remove all places
+    self.places.removeAll();
+    // Itarate in temporary Object
+    self.placeObjectSearch().forEach(function(place) {
+      markers[place.id()].setVisible(false);
+      if (place.name().toLowerCase().indexOf(search) >= 0) {
+        self.places.push(place);
+      }
+    });
+    // Redraw pins
+    self.places().forEach(function(place) {
+      markers[place.id()].setVisible(true);
+    });
+  };
 }
