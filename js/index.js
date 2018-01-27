@@ -139,10 +139,6 @@ function initMap() {
   // Style the markers a bit. This will be our listing marker icon.
   var defaultIcon = makeMarkerIcon('0091ff');
 
-  // Create a "highlighted location" marker color for when the user
-  // mouses over the marker.
-  var highlightedIcon = makeMarkerIcon('FFFF24');
-
   // The following group uses the location array to create an array of markers on initialize.
   for (var i = 0; i < locations.length; i++) {
     // Get the position from the location array.
@@ -158,17 +154,14 @@ function initMap() {
     });
     // Push the marker to our array of markers.
     markers.push(marker);
+    
+    google.maps.event.addListener(marker, 'click', function() {
+      populateInfoWindow(marker, largeInfowindow);
+    });
+    
     // Create an onclick event to open the large infowindow at each marker.
     marker.addListener('click', function() {
       populateInfoWindow(this, largeInfowindow);
-    });
-    // Two event listeners - one for mouseover, one for mouseout,
-    // to change the colors back and forth.
-    marker.addListener('mouseover', function() {
-      this.setIcon(highlightedIcon);
-    });
-    marker.addListener('mouseout', function() {
-      this.setIcon(defaultIcon);
     });
   }
   
@@ -230,7 +223,7 @@ function getDescription(descriptObj) {
   var description = '';
   Object.keys(descriptObj).map(function(key, index) {
     if (key == "terms") {
-      description = descriptObj[key]
+      description = descriptObj[key];
       Object.keys(description).map(function(key, index) {
         description = description[key][0];
       });
@@ -242,7 +235,7 @@ function getDescription(descriptObj) {
 
 // Get thumbnail from wikipedia API
 function getThumbnail(thumbObj) {
-  var thumb = ''
+  var thumb = '';
   Object.keys(thumbObj).map(function(key, index) {
     if ( key == "thumbnail") {
       thumb = thumbObj[key];
@@ -312,7 +305,7 @@ var viewModel = function() {
       self.hasToggleMenu(false);
       drawer.classList.remove('open');
     }
-  }
+  };
   
   // Filter function
   self.filterPins = function () {
@@ -336,7 +329,7 @@ var viewModel = function() {
   self.showMenu = function(toggleMenu) {
     self.hasToggleMenu(true);
     drawer.classList.toggle('open');
-  }
+  };
   
   self.resetMapZoom = function() {
     map.panTo(new google.maps.LatLng(-3.0894883, -59.9963515));
@@ -345,5 +338,5 @@ var viewModel = function() {
       self.hasToggleMenu(false);
       drawer.classList.remove('open');
     }
-  }
-}
+  };
+};
