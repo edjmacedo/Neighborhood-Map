@@ -139,6 +139,10 @@ function initMap() {
   // Style the markers a bit. This will be our listing marker icon.
   var defaultIcon = makeMarkerIcon('0091ff');
 
+  // Create a "highlighted location" marker color for when the user
+  // mouses over the marker.
+  var highlightedIcon = makeMarkerIcon('FFFF24');
+
   // The following group uses the location array to create an array of markers on initialize.
   for (var i = 0; i < locations.length; i++) {
     // Get the position from the location array.
@@ -155,18 +159,37 @@ function initMap() {
     // Push the marker to our array of markers.
     markers.push(marker);
     
-    google.maps.event.addListener(marker, 'click', function() {
-      populateInfoWindow(marker, largeInfowindow);
-    });
+    // Draw pins
+    setPins(marker, largeInfowindow);
     
-    // Create an onclick event to open the large infowindow at each marker.
-    marker.addListener('click', function() {
-      populateInfoWindow(this, largeInfowindow);
-    });
+    // Set mouseover animation
+    setMouseOverAnimation(marker, highlightedIcon);
+    
+    // set mouseout animation
+    setMouseOutAnimation(marker, defaultIcon);
   }
   
   // Initialize pins
   showListings();
+}
+
+function setMouseOutAnimation(marker, defaultIcon) {
+  marker.addListener('mouseout', function() {
+    this.setIcon(defaultIcon);
+  });
+}
+
+function setMouseOverAnimation(marker, highlightedIcon) {
+  marker.addListener('mouseover', function() {
+    this.setIcon(highlightedIcon);
+  });
+}
+
+// Draw pins on map
+function setPins(marker, largeInfowindow) {
+  marker.addListener('click', function() {
+    populateInfoWindow(this, largeInfowindow);
+  });
 }
 
 // This function populates the infowindow when the marker is clicked. We'll only allow
