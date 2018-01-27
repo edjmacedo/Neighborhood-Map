@@ -8,7 +8,8 @@
     <script src="js/jquery.min.js"></script>
     <script async defer
         src=
-        "https://maps.googleapis.com/maps/api/js?libraries=geometry,drawing&key=AIzaSyA3kcc5mTYacreo-kLUOM2ZF9N7u_hGQoQ&v=3&callback=initMap">
+        "https://maps.googleapis.com/maps/api/js?libraries=geometry,
+         drawing&key=AIzaSyA3kcc5mTYacreo-kLUOM2ZF9N7u_hGQoQ&v=3&callback=initMap">
     </script>
     <link rel="stylesheet" href="css/main.css">
     <script async type="text/javascript" src="js/index.js"></script>
@@ -24,7 +25,8 @@
         <h1>Find Your Favorite place</h1>
         <hr>
         <div>
-          <input class="form-control" placeholder="Search…" type="search" name="filter" data-bind="textInput: query, event: {keyup: filterPins}" autocomplete="on">
+          <input class="form-control" placeholder="Search…" type="search" name="filter"
+                 data-bind="textInput: query, event: {keyup: filterPins}" autocomplete="on">
           <input type="button" data-bind="click: resetMapZoom" value="Reset Map">
         </div>
         <div id="place-list">

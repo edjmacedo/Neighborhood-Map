@@ -7,15 +7,51 @@ var markers = [];
 // These are the real estate listings that will be shown to the user.
 // Normally we'd have these in a database instead.
 var locations = [
-  { id: 0, title: 'Teatro Amazonas', location: {lat: -3.13026400328893, lng: -60.02314908159843} },
-  { id: 1, title: 'Jardim Botânico Adolpho Ducke', location: {lat: -3.0073486139980687, lng: -59.93967762220971} },
-  { id: 2, title: 'Ponta Negra (Manaus)', location: {lat: -3.066115012379097, lng: -60.09809999253315} },
-  { id: 3, title: 'Ponte Jornalista Phelippe Daou', location: {lat: -3.1203117128546087, lng:  -60.079582929611206} },
-  { id: 4, title: 'Aeroporto Internacional de Manaus', location: {lat: -3.0319609869385165, lng: -60.04603885297747} },
-  { id: 5, title: 'Universidade Federal do Amazonas', location: {lat: -3.0998323793813674, lng: -59.974869624148745} },
-  { id: 6, title: 'Avenida das Torres', location: {lat: -3.0934318769375415, lng:  -59.98937479695357 } },
-  { id: 7, title: 'Universidade do Estado do Amazonas', location: {lat: -3.0917768221643263, lng:  -60.01810188018957 } },
-  { id: 8, title: 'Arena da Amazônia', location: {lat: -3.0832657510562296, lng:  -60.02815961837768 } }
+  {
+    id: 0,
+    title: 'Teatro Amazonas',
+    location: {lat: -3.13026400328893, lng: -60.02314908159843}
+  },
+  {
+    id: 1,
+    title: 'Jardim Botânico Adolpho Ducke',
+    location: {lat: -3.0073486139980687, lng: -59.93967762220971} 
+  },
+  {
+    id: 2,
+    title: 'Ponta Negra (Manaus)',
+    location: {lat: -3.066115012379097, lng: -60.09809999253315}
+  },
+  {
+    id: 3,
+    title: 'Ponte Jornalista Phelippe Daou',
+    location: {lat: -3.1203117128546087, lng:  -60.079582929611206}
+  },
+  {
+    id: 4,
+    title: 'Aeroporto Internacional de Manaus',
+    location: {lat: -3.0319609869385165, lng: -60.04603885297747}
+  },
+  {
+    id: 5,
+    title: 'Universidade Federal do Amazonas',
+    location: {lat: -3.0998323793813674, lng: -59.974869624148745}
+  },
+  {
+    id: 6,
+    title: 'Avenida das Torres',
+    location: {lat: -3.0934318769375415, lng:  -59.98937479695357 }
+  },
+  {
+    id: 7,
+    title: 'Universidade do Estado do Amazonas',
+    location: {lat: -3.0917768221643263, lng:  -60.01810188018957 }
+  },
+  {
+    id: 8,
+    title: 'Arena da Amazônia',
+    location: {lat: -3.0832657510562296, lng:  -60.02815961837768 }
+  }
 ];
 
 function initMap() {
@@ -150,6 +186,7 @@ function populateInfoWindow(marker, infowindow) {
   var wikiURL = 'http://pt.wikipedia.org/w/api.php?action=query&'+
       'format=json&prop=pageimages%7Cpageterms&list=&titles=' + marker.title +
       '&redirects=1&formatversion=2&piprop=thumbnail&pilimit=1&wbptterms=description';
+  marker.setAnimation(google.maps.Animation.BOUNCE);
   // Check to make sure the infowindow is not already opened on this marker.
   if (infowindow.marker != marker) {
     // Clear the infowindow content to give the streetview time to load.
