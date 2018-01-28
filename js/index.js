@@ -123,7 +123,7 @@ function initMap() {
     }
   ];
   
-  ko.applyBindings(new viewModel());
+  ko.applyBindings(new ViewModel());
 
   // Constructor creates a new map - only center and zoom are required.
   map = new google.maps.Map(document.getElementById('map'), {
@@ -203,6 +203,9 @@ function populateInfoWindow(marker, infowindow) {
       'format=json&prop=pageimages%7Cpageterms&list=&titles=' + marker.title +
       '&redirects=1&formatversion=2&piprop=thumbnail&pilimit=1&wbptterms=description';
   marker.setAnimation(google.maps.Animation.BOUNCE);
+  setTimeout(function() {
+    marker.setAnimation(null);
+  }, 1000);
   // Check to make sure the infowindow is not already opened on this marker.
   if (infowindow.marker != marker) {
     // Clear the infowindow content to give the streetview time to load.
@@ -213,26 +216,22 @@ function populateInfoWindow(marker, infowindow) {
       infowindow.marker = null;
     });
     
-    // Wikipedia request
-    var wikiRequestTimeout = setTimeout(function() {
-      infowindow.setContent("<p>Failed to get wikipedia resources</p>");
-    }, 8000);
-    
     $.ajax({
       url: wikiURL,
-      dataType: "jsonp",
-      success: function(response) {
-        Object.keys(response).map(function(key, index) {
-          var res = response[key];
-          Object.keys(res).map(function(key, index) {
-            infowindow.setContent('<p>' + res[key][0].title + '</p>'+
-                                 '<img src=' + getThumbnail(res[key][0]) + '>' +
-                                 '<p>' + getDescription(res[key][0]) + '</p>' +
-                                 '<p>' + lat + ',' + lng + '</p>');
-          });
+      dataType: "jsonp"
+    }).done(function (response) {
+      Object.keys(response).map(function(key, index) {
+        var res = response[key];
+        Object.keys(res).map(function(key, index) {
+          infowindow.setContent('<p>' + res[key][0].title + '</p>'+
+                               '<img src=' + getThumbnail(res[key][0]) + '>' +
+                               '<p>' + getDescription(res[key][0]) + '</p>' +
+                               '<p>' + lat + ',' + lng + '</p>');
         });
-        clearTimeout(wikiRequestTimeout);
-      }
+      });
+    }).fail(function (jqXHR, textStatus) {
+      console.log("Enter here");
+      infowindow.setContent("<p>Failed to get wikipedia resources</p>");
     });
     
     infowindow.open(map, marker);
@@ -280,7 +279,9 @@ function showListings() {
     markers[i].setMap(map);
     bounds.extend(markers[i].position);
   }
-  map.fitBounds(bounds);
+  google.maps.event.addDomListener(window, 'resize', function() {
+    map.fitBounds(bounds);
+  });
 }
 
 // This function takes in a COLOR, and then creates a new marker
@@ -297,6 +298,10 @@ function makeMarkerIcon(markerColor) {
   return markerImage;
 }
 
+mapError = () => {
+  alert("It is not possible to load google map, please check your internet connection");
+};
+
 // single place object
 var singlePlace = function(data) {
   this.id = ko.observable(data.id);
@@ -306,7 +311,7 @@ var singlePlace = function(data) {
 };
 
 // Handle all interactions such as, filter, search and click
-var viewModel = function() {
+var ViewModel = function() {
   var self = this;
   var drawer = document.querySelector('.options-box');
   this.query = ko.observable('');

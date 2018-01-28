@@ -90,7 +90,6 @@ hr {
   }
   
   #map {
-    position: sticky;
     left: 75px;
     width: 100%;
     z-index: -9;

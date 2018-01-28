@@ -4,15 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <script src="js/knockoutjs.js"></script>
-    <script src="js/jquery.min.js"></script>
-    <script async defer
-        src=
-        "https://maps.googleapis.com/maps/api/js?libraries=geometry,
-         drawing&key=AIzaSyA3kcc5mTYacreo-kLUOM2ZF9N7u_hGQoQ&v=3&callback=initMap">
-    </script>
     <link rel="stylesheet" href="css/main.css">
-    <script async type="text/javascript" src="js/index.js"></script>
   </head>
   <body>
     <div class="container">
@@ -39,5 +31,14 @@
       </div>
       <div id="map"></div>
     </div>
+    <script src="js/knockoutjs.js"></script>
+    <script src="js/jquery.min.js"></script>
+    <script
+        src=
+        "https://maps.googleapis.com/maps/api/js?libraries=geometry,
+         drawing&key=AIzaSyA3kcc5mTYacreo-kLUOM2ZF9N7u_hGQoQ&v=3&callback=initMap"
+        async defer onerror="mapError()">
+    </script>
+    <script type="text/javascript" src="js/index.js"></script>
   </body>
 </html>
