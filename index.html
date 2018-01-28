@@ -9,9 +9,7 @@
   <body>
     <div class="container">
       <a id="menu" class="header-menu" data-bind="click: showMenu">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <path d="M2 6h20v3H2zm0 5h20v3H2zm0 5h20v3H2z"/>
-        </svg>
+        <img src="img/hambuguer.svg" />
       </a>
       <div class="options-box">
         <h1>Find Your Favorite place</h1>
@@ -33,12 +31,12 @@
     </div>
     <script src="js/knockoutjs.js"></script>
     <script src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
     <script
         src=
         "https://maps.googleapis.com/maps/api/js?libraries=geometry,
          drawing&key=AIzaSyA3kcc5mTYacreo-kLUOM2ZF9N7u_hGQoQ&v=3&callback=initMap"
         async defer onerror="mapError()">
     </script>
-    <script type="text/javascript" src="js/index.js"></script>
   </body>
 </html>
